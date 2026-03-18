@@ -28,6 +28,9 @@ ConstantDataArray *StringObfuscatorPass::encodeStringDataArray(LLVMContext &ctx,
                                                                const char *str,
                                                                size_t size,
                                                                uint8_t key) {
+  if (this->maxSize != 0 && size > this->maxSize)
+    return nullptr;
+
   // Encode the data
   char *encodedStr = (char *)malloc(size);
   for (unsigned int i = 0; i < size; i++) {
@@ -78,7 +81,7 @@ void StringObfuscatorPass::encodeStructString(LLVMContext &ctx,
   }
 }
 
-StringObfuscatorPass::StringObfuscatorPass() {}
+StringObfuscatorPass::StringObfuscatorPass(size_t maxSize) : maxSize{maxSize} {}
 
 bool StringObfuscatorPass::encodeAllStrings(Module &M) {
   auto &ctx = M.getContext();
